@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-xl navbar-dark bg-primary fixed-top">
+    <button class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#bs-example-navbar-collapse-1">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">MikeRun</a>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="navbar-nav ml-md-auto">
+            <li class="nav-item active" ng-if="user===undefined">
+                <a class="nav-link" href="#">Sign Up<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active" ng-if="user===undefined">
+                <a class="nav-link"
+                   href="#"
+                   data-toggle="modal"
+                   data-target="#login-modal">
+                    Login
+                    <span class="sr-only">
+                        (current)
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                   id="navbarDropdownMenuLink"
+                   role="button"
+                   data-toggle="dropdown"
+                   aria-haspopup="true"
+                   aria-expanded="false"
+                   ng-if="user!==undefined">
+                    {{user.name}}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" ng-href="#!loggedIn">Home</a>
+                    <a class="dropdown-item" ng-href="#!profile">Profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" ng-click="logout()">Log Out</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

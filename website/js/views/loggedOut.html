@@ -1,0 +1,142 @@
+<header ng-include="'js/views/includes/header.html'"></header>
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" align="center">
+                <img class="rounded-circle ml-auto" id="img_logo" src="data:image/png;base64,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">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Begin # DIV Form -->
+            <div id="div-forms">
+                <!-- Begin # Login Form -->
+                <form id="login-form" ng-submit="login(user, true)">
+                    <div class="modal-body">
+                        <div id="div-login-msg">
+                            <div id="icon-login-msg" class="glyphicon glyphicon-chevron-right"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="login_username">Email address:</label>
+                            <input id="login_username" class="form-control" type="text" placeholder="Username" ng-model="user.email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login_password">Password:</label>
+                            <input id="login_password" class="form-control py-3" type="password" placeholder="Password" ng-model="user.password" required>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="login_remember">
+                            <label class="form-check-label" for="login_remember">Remember me</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div>
+                            <button id="login_register_btn" type="button" class="btn btn-link">Register</button>
+                            <button id="login_lost_btn" type="button" class="btn btn-link">Lost Password?</button>
+                            <button type="submit" class="btn btn-outline-primary btn-block">Login</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- End # Login Form -->
+
+                <!-- Begin | Lost Password Form -->
+                <form id="lost-form" style="display:none;">
+                    <div class="modal-body">
+                        <div id="div-lost-msg">
+                            <div id="icon-lost-msg" class="glyphicon glyphicon-chevron-right"></div>
+                            <span id="text-lost-msg">Type your e-mail.</span>
+                        </div>
+                        <input id="lost_email" class="form-control" type="text" placeholder="E-Mail (type ERROR for error effect)" required>
+                    </div>
+                    <div class="modal-footer">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">Send</button>
+                        </div>
+                        <div>
+                            <button id="lost_login_btn" type="button" class="btn btn-link">Log In</button>
+                            <button id="lost_register_btn" type="button" class="btn btn-link">Register</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- End | Lost Password Form -->
+
+                <!-- Begin | Register Form -->
+                <form id="register-form" style="display:none;">
+                    <div class="modal-body">
+                        <div id="div-register-msg">
+                            <div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
+                            <span id="text-register-msg">Register an account.</span>
+                        </div>
+                        <input id="register_username" class="form-control" type="text" placeholder="Username (type ERROR for error effect)" required>
+                        <input id="register_email" class="form-control" type="text" placeholder="E-Mail" required>
+                        <input id="register_password" class="form-control" type="password" placeholder="Password" required>
+                    </div>
+                    <div class="modal-footer">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
+                        </div>
+                        <div>
+                            <button id="register_login_btn" type="button" class="btn btn-link">Log In</button>
+                            <button id="register_lost_btn" type="button" class="btn btn-link">Lost Password?</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- End | Register Form -->
+
+            </div>
+            <!-- End # DIV Form -->
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="py-3"></div>
+        <div class="py-3"></div>
+        <div class="jumbotron">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h2>
+            Heading
+        </h2>
+        <p>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris
+            condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis
+            euismod. Donec sed odio dui.
+        </p>
+        <p>
+            <a class="btn" href="#">View details »</a>
+        </p>
+    </div>
+    <div class="col">
+        <h2>
+            Heading
+        </h2>
+        <p>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris
+            condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis
+            euismod. Donec sed odio dui.
+        </p>
+        <p>
+            <a class="btn" href="#">View details »</a>
+        </p>
+    </div>
+    <div class="col">
+        <h2>
+            Heading
+        </h2>
+        <p>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris
+            condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis
+            euismod. Donec sed odio dui.
+        </p>
+        <p>
+            <a class="btn" href="#">View details »</a>
+        </p>
+    </div>
+</div>
+<footer ng-include="'js/views/includes/footer.html'"></footer>

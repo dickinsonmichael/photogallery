@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  AWS Serverless Application
+
+  Sample SAM Template for AWS Serverless Application
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Parameters:
+  AppName:
+    Type: String
+    Default: photo-gallery
+
+Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Ref AppName
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+      UsernameAttributes:
+        - email
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Required: false
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub "${AppName}-website"
+      GenerateSecret: false
+
+  GetImages:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: images/
+      Handler: get.lambda_handler
+      Runtime: python3.6
+      Events:
+        GetImages:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /images
+            Method: GET
+            Auth:
+              Authorizer: NONE
+  PostImages:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: images/
+      Handler: post.lambda_handler
+      Runtime: python3.6
+      Events:
+        PostImages:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /images
+            Method: POST
+            Auth:
+              Authorizer: NONE
+  PutImages:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: images/
+      Handler: put.lambda_handler
+      Runtime: python3.6
+      Events:
+        PutImages:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /images
+            Method: PUT
+            Auth:
+              Authorizer: NONE
+  DeleteImages:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: images/
+      Handler: delete.lambda_handler
+      Runtime: python3.6
+      Events:
+        DeleteImages:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /images
+            Method: DELETE
+            Auth:
+              Authorizer: NONE
+
+  FrontendS3Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub "${AppName}-frontend"
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      VersioningConfiguration:
+        Status: Enabled
+  FrontendS3BucketPolicy: # define a managed (managed by the user) policy that makes the bucket readable.
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendS3Bucket # a reference to the bucket defined above
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource:
+              - !Sub "arn:aws:s3:::${FrontendS3Bucket}/*"
+            Principal: '*'
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage of the API"
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  FrontendS3BucketName:
+    Description: "The name of the S3 bucket for hosting the frontend website"
+    Value: !Ref FrontendS3Bucket
+  FrontendWebUrl:
+    Description: "The web address at which the site can be accessed"
+    Value: !GetAtt FrontendS3Bucket.WebsiteURL

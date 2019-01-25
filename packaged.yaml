@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS Serverless Application
+
+  Sample SAM Template for AWS Serverless Application
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL for Prod stage of the API
+    Value:
+      Fn::Sub: https://${Api}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+  FrontendS3BucketName:
+    Description: The name of the S3 bucket for hosting the frontend website
+    Value:
+      Ref: FrontendS3Bucket
+  FrontendWebUrl:
+    Description: The web address at which the site can be accessed
+    Value:
+      Fn::GetAtt:
+      - FrontendS3Bucket
+      - WebsiteURL
+Parameters:
+  AppName:
+    Default: photo-gallery
+    Type: String
+Resources:
+  Api:
+    Properties:
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn:
+              Fn::GetAtt:
+              - CognitoUserPool
+              - Arn
+        DefaultAuthorizer: CognitoAuthorizer
+      Cors: '''*'''
+      StageName: Prod
+    Type: AWS::Serverless::Api
+  CognitoUserPool:
+    Properties:
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+      Schema:
+      - AttributeDataType: String
+        Name: email
+        Required: false
+      UserPoolName:
+        Ref: AppName
+      UsernameAttributes:
+      - email
+    Type: AWS::Cognito::UserPool
+  CognitoUserPoolClient:
+    Properties:
+      ClientName:
+        Fn::Sub: ${AppName}-website
+      GenerateSecret: false
+      UserPoolId:
+        Ref: CognitoUserPool
+    Type: AWS::Cognito::UserPoolClient
+  DeleteImages:
+    Properties:
+      CodeUri: s3://mjd-sam-build-bucket/a6e9eac49d87a7cc45a91aa3746b4a7d
+      Events:
+        DeleteImages:
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Method: DELETE
+            Path: /images
+            RestApiId:
+              Ref: Api
+          Type: Api
+      Handler: delete.lambda_handler
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  FrontendS3Bucket:
+    DeletionPolicy: Retain
+    Properties:
+      BucketName:
+        Fn::Sub: ${AppName}-frontend
+      VersioningConfiguration:
+        Status: Enabled
+      WebsiteConfiguration:
+        ErrorDocument: index.html
+        IndexDocument: index.html
+    Type: AWS::S3::Bucket
+  FrontendS3BucketPolicy:
+    Properties:
+      Bucket:
+        Ref: FrontendS3Bucket
+      PolicyDocument:
+        Statement:
+        - Action:
+          - s3:GetObject
+          Effect: Allow
+          Principal: '*'
+          Resource:
+          - Fn::Sub: arn:aws:s3:::${FrontendS3Bucket}/*
+    Type: AWS::S3::BucketPolicy
+  GetImages:
+    Properties:
+      CodeUri: s3://mjd-sam-build-bucket/a6e9eac49d87a7cc45a91aa3746b4a7d
+      Events:
+        GetImages:
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Method: GET
+            Path: /images
+            RestApiId:
+              Ref: Api
+          Type: Api
+      Handler: get.lambda_handler
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  PostImages:
+    Properties:
+      CodeUri: s3://mjd-sam-build-bucket/a6e9eac49d87a7cc45a91aa3746b4a7d
+      Events:
+        PostImages:
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Method: POST
+            Path: /images
+            RestApiId:
+              Ref: Api
+          Type: Api
+      Handler: post.lambda_handler
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  PutImages:
+    Properties:
+      CodeUri: s3://mjd-sam-build-bucket/a6e9eac49d87a7cc45a91aa3746b4a7d
+      Events:
+        PutImages:
+          Properties:
+            Auth:
+              Authorizer: NONE
+            Method: PUT
+            Path: /images
+            RestApiId:
+              Ref: Api
+          Type: Api
+      Handler: put.lambda_handler
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

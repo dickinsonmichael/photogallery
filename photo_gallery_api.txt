@@ -1,0 +1,16 @@
+GET /images List all images
+POST /images Add a new image
+GET /images/id Get a specific image
+PUT /images/id Update an image (full object)
+PATCH /images/id Update an image (partial object)
+DELETE /images/id Delete an image
+
+GET /albums List all albums
+POST /albums Create a new album
+GET /albums/id Retrieve an entire album object
+PUT /albums/id Update an album  (full object)
+PATCH /albums/id Update an album  (partial object)
+DELETE /albums/id Delete an album
+GET /albums/id/images Retrieve a listing of all images in an album
+POST /albums/id/images Add an image to an album
+DELETE /albums/id/images Remove an image from an album
